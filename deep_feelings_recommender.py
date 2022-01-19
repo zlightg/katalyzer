@@ -8,7 +8,7 @@ import tensorflow_recommenders as tfrs
 
 # load emotions activities data
 emotion_activities = tf.data.experimental.CsvDataset(
-  "/Users/gkar/git/zenith/server/recommender/datasets/emotion_activities.csv",
+  "datasets/emotion_activities.csv",
   [
     tf.string, #  User ID
     tf.string,  # Emotion
@@ -21,7 +21,7 @@ emotion_activities = tf.data.experimental.CsvDataset(
 )
 # Features of all the activities
 activities =tf.data.experimental.CsvDataset(
-  "/Users/gkar/git/zenith/server/recommender/datasets/activity.csv",
+  "datasets/activity.csv",
   [tf.string,  # Required field, use dtype or empty tensor
    tf.int32,  # Required field, use dtype or empty tensor
   ],
@@ -191,9 +191,16 @@ model = FeelinglensModel([64, 32])
 model.compile(optimizer=tf.keras.optimizers.Adagrad(0.1))
 model.fit(emotion_activities.batch(4096), epochs=30)
 
+
 # Use brute-force search to set up retrieval using the trained representations.
 index = tfrs.layers.factorized_top_k.BruteForce(model.query_model)
-index.index(activities.batch(1024).map(model.candidate_model), identifiers=activities)
+## TODO REMOVE
+#index.index(activities.batch(1024).map(model.candidate_model), identifiers=activities)
+
+# recommends movies out of the entire movies dataset.
+index.index_from_dataset(
+  tf.data.Dataset.zip((activities.batch(100), activities.batch(100).map(model.candidate_model)))
+)
 
 # _, titles = index(np.array(["1","2"])
 _, titles = index({"userId": tf.constant(["2"]), "emotion": tf.constant(["Tired"])})
