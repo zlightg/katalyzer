@@ -6,7 +6,7 @@ from flask_cors import CORS
 from util import readFileToDict, processMessage
 import json
 
-path = "/Users/gkar/git/zenith/server/recommender/models"
+path = "models"
 
 app = Flask(__name__)
 CORS(app)
