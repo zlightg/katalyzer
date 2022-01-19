@@ -207,4 +207,4 @@ _, titles = index({"userId": tf.constant(["2"]), "emotion": tf.constant(["Tired"
 
 print(f"Top recommendations for user 1 and emotion id: Sad: {titles[0, :1]}")
 
-tf.saved_model.save(index, "/Users/gkar/git/zenith/server/recommender/models")
+tf.saved_model.save(index, "models")
