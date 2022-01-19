@@ -5,7 +5,7 @@ from queries import Query
 from templateParser import resultProcessor
 import tensorflow as tf
 import json
-path = "/Users/gkar/git/zenith/server/recommender/models"
+path = "models"
 # Load it back; can also be done in TensorFlow Serving.
 loaded = tf.saved_model.load(path)
 import csv
