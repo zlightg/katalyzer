@@ -1,7 +1,6 @@
 const msgerForm = get(".msger-inputarea");
 const msgerInput = get(".msger-input");
 const msgerChat = get(".msger-chat");
-const HOST = "35.202.51.79"
 
 const BOT_MSGS = [
   "Hi, how are you today?",
@@ -74,7 +73,7 @@ function submitMessage(state) {
 
 function makeAjaxCall(state) {
   //fetch('http://127.0.0.1:5000/messages/' + JSON.stringify(state))
-  fetch('http://35.202.51.79:5000/messages', {
+  fetch('127.0.0.1:5000/messages', {
     method:'post',
     body: JSON.stringify(state)
   })
