@@ -1,0 +1,17 @@
+{
+  "name": "ls",
+  "version": "1.0.0",
+  "description": "A Pen created on CodePen.io. Original URL: [https://codepen.io/sajadhsm/pen/odaBdd](https://codepen.io/sajadhsm/pen/odaBdd).",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel src/ -d dist --source-maps --copy-files",
+    "start": "npm run build && node src/script.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.16.8",
+    "@babel/core": "^7.16.7",
+    "@babel/preset-env": "^7.16.8"
+  }
+}
