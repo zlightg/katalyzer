@@ -73,7 +73,7 @@ function submitMessage(state) {
 
 function makeAjaxCall(state) {
   //fetch('http://127.0.0.1:5000/messages/' + JSON.stringify(state))
-  fetch('http://127.0.0.1:5000/messages', {
+  fetch('http://127.0.0.1:5000/messages/', {
     method:'post',
     body: JSON.stringify(state)
   })
