@@ -1,11 +1,10 @@
 const msgerForm = get(".msger-inputarea");
 const msgerInput = get(".msger-input");
 const msgerChat = get(".msger-chat");
-const HOST = "35.202.51.79";
 const BOT_MSGS = ["Hi, how are you today?", "Ohh... I can't understand what you trying to say. Sorry!", "I like to play games... But I don't know how to play!", "Sorry if my answers are not relevant. :))", "I feel sleepy! :("]; // Icons made by Freepik from www.flaticon.com
 
-const BOT_IMG = "https://image.flaticon.com/icons/svg/327/327779.svg";
-const PERSON_IMG = "https://image.flaticon.com/icons/svg/145/145867.svg";
+const BOT_IMG = "https://cdn-icons.flaticon.com/png/512/2814/premium/2814650.png?token=exp=1642749570~hmac=d67026d1ad0847c2ee3b1059f5f4e0d2";
+const PERSON_IMG = "https://cdn-icons-png.flaticon.com/512/30/30473.png";
 const BOT_NAME = "Kat";
 const PERSON_NAME = "Human";
 var global_state = {
@@ -65,7 +64,7 @@ function submitMessage(state) {
 
 function makeAjaxCall(state) {
   //fetch('http://127.0.0.1:5000/messages/' + JSON.stringify(state))
-  fetch('http://35.202.51.79:5000/messages', {
+  fetch('http://127.0.0.1:5000/messages', {
     method: 'post',
     body: JSON.stringify(state)
   }).then(response => response.json()).then(data => {
