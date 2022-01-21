@@ -3,13 +3,14 @@ const msgerInput = get(".msger-input");
 const msgerChat = get(".msger-chat");
 const BOT_MSGS = ["Hi, how are you today?", "Ohh... I can't understand what you trying to say. Sorry!", "I like to play games... But I don't know how to play!", "Sorry if my answers are not relevant. :))", "I feel sleepy! :("]; // Icons made by Freepik from www.flaticon.com
 
-const BOT_IMG = "https://cdn-icons.flaticon.com/png/512/2814/premium/2814650.png?token=exp=1642749570~hmac=d67026d1ad0847c2ee3b1059f5f4e0d2";
+const BOT_IMG = "https://cdn-icons-png.flaticon.com/512/6618/6618664.png";
 const PERSON_IMG = "https://cdn-icons-png.flaticon.com/512/30/30473.png";
 const BOT_NAME = "Kat";
 const PERSON_NAME = "Human";
+const DEFAULT_MESSAGE = "Hello Kat";
 var global_state = {
   "state": {
-    "message": "Hello World"
+    "message": DEFAULT_MESSAGE
   }
 };
 
@@ -60,6 +61,19 @@ function submitMessage(state) {
   context = getContext();
   state['context'] = context;
   makeAjaxCall(state);
+} // TODO make function more robust
+
+
+function client_processor(callback) {
+  switch (callback) {
+    case "callback()":
+      global_state["message"] = DEFAULT_MESSAGE;
+      submitMessage(global_state);
+      break;
+
+    default:
+      console.log("received unexpected call back:" + callback);
+  }
 }
 
 function makeAjaxCall(state) {
@@ -69,6 +83,7 @@ function makeAjaxCall(state) {
     body: JSON.stringify(state)
   }).then(response => response.json()).then(data => {
     global_state = data;
+    console.log(data);
 
     if (data['state']['user_id'] != undefined) {
       if (data['state']['user_id'] != -1) {
@@ -76,7 +91,11 @@ function makeAjaxCall(state) {
       }
     }
 
-    appendMessage(BOT_NAME, BOT_IMG, "left", data.message);
+    appendMessage(BOT_NAME, BOT_IMG, "left", data.message); // TOOD Move to seperate function
+
+    if (data['state']['client_processor'] != undefined) {
+      client_processor(data['state']['client_processor']);
+    }
   });
 }
 

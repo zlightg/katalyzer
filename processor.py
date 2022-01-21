@@ -80,11 +80,11 @@ class Processor:
 
     def getFeelings(self, state):
         result = self.q.execute("SELECT name from feeling")
-        return [row["name"] for row in result]
+        return ", ".join([row["name"] for row in result])
 
     def getActivities(self, state):
         result = self.q.execute("SELECT name from activity")
-        return [row["name"] for row in result]
+        return ", ".join([row["name"] for row in result])
 
     def getCategory(self, conversation_id):
         query = "SELECT category FROM message_state where id in (SELECT state_id from message where conversation_id = {} AND sender_id = 0 ORDER BY sent_at desc limit 1)".format(conversation_id)
