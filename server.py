@@ -5,6 +5,8 @@ from flask import jsonify, request
 from flask_cors import CORS
 from util import readFileToDict, processMessage
 import json
+from time import sleep
+from random import random
 
 path = "models"
 
@@ -46,6 +48,8 @@ def rateactivity(user,feeling,activity,rating):
 
 @app.route("/messages", methods=['POST'])
 def message():
+  # add random latency for now to give the perception of work being done
+  sleep(random())
   data = json.loads(request.data)
   return processMessage(data  )
 
