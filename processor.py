@@ -94,7 +94,7 @@ class Processor:
     def getRankedActivities(self, user_id, message):
         _, activities = loaded({"userId": tf.constant([str(user_id)]), "emotion": tf.constant([message])})
         activity_list = [x.decode('utf-8') for x in activities[0].numpy().tolist()]
-        return activity_list[:3]
+        return ", ".join(activity_list[:3])
 
     #DOES NOT OVERWRITE
     def persistState(self, state, key, val):
