@@ -48,9 +48,10 @@ class Processor:
 
     def getLastMessageStateId(self, state, conversation_id):
         ### TODO init first message if it does not exist
-        result = self.q.execute(
-            "SELECT state_id, persisted_state FROM message WHERE sender_id = 0 AND conversation_id = {} ORDER BY sent_at DESC LIMIT 1".format(
-                conversation_id))
+        query = "SELECT state_id, persisted_state from message where conversation_id = {} AND sender_id = 0" \
+                "AND state_id not in (SELECT id from message_state where is_followup) ORDER BY sent_at desc limit 1".format(
+            conversation_id)
+        result = self.q.execute(query)
         ## TODO MOVE TO IT's OWN CALL
         state['persisted'] = json.loads(result[0]["persisted_state"])
         return result[0].state_id
@@ -123,7 +124,8 @@ class Processor:
             state["next_message_state_id"] = None
             return value
         else:
-            query = "SELECT state_id, persisted_state from message where conversation_id = {} AND sender_id = 0 ORDER BY sent_at desc limit 1".format(conversation_id)
+            query = "SELECT state_id, persisted_state from message where conversation_id = {} AND sender_id = 0" \
+                    "AND state_id not in (SELECT id from message_state where is_followup) ORDER BY sent_at desc limit 1".format(conversation_id)
             result = self.q.execute(query)
             state['persisted'] = json.loads(result[0]["persisted_state"])
             return result[0]["state_id"]
