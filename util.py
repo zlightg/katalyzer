@@ -73,8 +73,8 @@ def processMessage(message):
 
 
     if "post_message_processor" in message['state']['next_message_state'] and message['state']['next_message_state']['post_message_processor'] is not None:
-       funcs = message['state']['next_message_state']['post_message_processor'].split("\n")
-       [resultProcessor(func, message['state'], p) for func in funcs]
+        funcs = message['state']['next_message_state']['post_message_processor'].split("\n")
+        [resultProcessor(func, message['state'], p) for func in funcs]
 
     ## TODO move to it's own function and share call with produce message
     message["state"]["sender_id"] = message["state"]["user_id"]

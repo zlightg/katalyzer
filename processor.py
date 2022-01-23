@@ -97,9 +97,8 @@ class Processor:
         activity_list = [x.decode('utf-8') for x in activities[0].numpy().tolist()]
         return ", ".join(activity_list[:3])
 
-    #DOES NOT OVERWRITE
     def persistState(self, state, key, val):
-        if 'persisted' in state and key.lower() not in state['persisted']:
+        if 'persisted' in state:
             state['persisted'][key.lower()] = val
         elif 'persisted' not in state:
             state['persisted'] = {key: val}
