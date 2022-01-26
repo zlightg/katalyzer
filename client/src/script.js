@@ -110,6 +110,8 @@ function makeAjaxCall(state) {
 
 function getContext() {
   date = new Date()
+  const now = new Date()
+  const secondsSinceEpoch = Math.round(now.getTime() / 1000)
   context =
   {
     'hour': date.getHours(),
@@ -118,6 +120,7 @@ function getContext() {
     'month': date.getMonth(),
     'date': date.getDate(),
     'year': date.getYear(),
+    'unix_time': secondsSinceEpoch
 
   }
   return context

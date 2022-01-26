@@ -92,8 +92,12 @@ class Processor:
         result = self.q.execute(query)
         return result[0]["category"]
 
-    def getRankedActivities(self, user_id, message):
-        _, activities = loaded({"userId": tf.constant([str(user_id)]), "emotion": tf.constant([message])})
+    def getRankedActivities(self, user_id, message, context):
+        _, activities = loaded({"userId": tf.constant([user_id]),
+                                "emotion": tf.constant([message]),
+                                "dow": tf.constant([context["dow"]]),
+                                "hour": tf.constant([context["hour"]])
+                                })
         activity_list = [x.decode('utf-8') for x in activities[0].numpy().tolist()]
         return ", ".join(activity_list[:3])
 
@@ -107,11 +111,11 @@ class Processor:
         if 'persisted' in state and key.lower() in state['persisted']:
             state['persisted'].pop(key.lower())
 
-    def addEntry(self, user_id, feeling, last_activity):
-        with open('datasets/emotion_activities.csv', 'a') as fd:
+    def addEntry(self, user_id, feeling, last_activity, context):
+        with open('datasets/emotion_activities_with_time.csv', 'a') as fd:
             activityID = activities[last_activity]
             feelingID = feelings[feeling]
-            row = "\n" + ",".join([str(user_id), feeling, feelingID, last_activity, activityID])
+            row = "\n" + ",".join([str(user_id), feeling, feelingID, last_activity, activityID, str(context["hour"]), str(context["dow"])])
             fd.write(row)
         return "success"
 

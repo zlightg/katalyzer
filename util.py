@@ -62,6 +62,7 @@ def produceMessage(state, proccesor):
 def processMessage(message):
     print("request below")
     print(message)
+    message["state"]["context"] = message['context']
     if "message" in message:
         message["state"]["message"] = message["message"]
     if "pre_message_processor" in message and message["pre_message_processor"] is not None:
@@ -70,7 +71,7 @@ def processMessage(message):
 
     # calc next message state
     message['state']['next_message_state'] = resultProcessor("$next_message_state", message['state'], p)
-
+    #message['state']['next_message_state']["context"] = message["state"]["context"]
 
     if "post_message_processor" in message['state']['next_message_state'] and message['state']['next_message_state']['post_message_processor'] is not None:
         funcs = message['state']['next_message_state']['post_message_processor'].split("\n")
