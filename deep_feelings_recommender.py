@@ -8,16 +8,18 @@ import tensorflow_recommenders as tfrs
 
 # load emotions activities data
 emotion_activities = tf.data.experimental.CsvDataset(
-  "datasets/emotion_activities.csv",
+  "datasets/emotion_activities_with_time.csv",
   [
     tf.string, #  User ID
     tf.string,  # Emotion
     tf.string,  # emotion id
      tf.string,  # activity
      tf.string,  # activity id
+     tf.int32,
+     tf.int32,
   ],
   header=True,
-  select_cols=[0,1,2,3,4]  # Only parse first two columns
+  select_cols=[0,1,2,3,4,5,6]  # parse all columns
 )
 # Features of all the activities
 activities =tf.data.experimental.CsvDataset(
@@ -30,31 +32,74 @@ activities =tf.data.experimental.CsvDataset(
 )
 
 
-emotion_activities = emotion_activities.map(lambda a,b,c,d,e: {
+emotion_activities = emotion_activities.map(lambda a,b,c,d,e,f,g: {
     "userId": a,
     "emotion": b,
     "emotionId": c,
     "activity": d,
-    "activityId": e
-
+    "activityId": e,
+    "hour": f,
+    "dow": g,
 })
 
 activities = activities.map(lambda x,y: x)
 
 #Get unique activities
-unique_activities = np.unique(np.concatenate(list(activities.batch(1000))))
+unique_activities = np.unique(np.concatenate(list(activities.batch(32))))
 
 # get unique user ids
-unique_user_ids = np.unique(np.concatenate(list(emotion_activities.batch(1000).map(
+unique_user_ids = np.unique(np.concatenate(list(emotion_activities.batch(32).map(
     lambda x: x["userId"]))))
 
-unique_feeling_ids = np.unique(np.concatenate(list(emotion_activities.batch(1000).map(
+unique_feeling_ids = np.unique(np.concatenate(list(emotion_activities.batch(32).map(
     lambda x: x["emotion"]))))
+
+# prepare time features
+
+day_of_week = np.concatenate(list(emotion_activities.map(lambda x: x["dow"]).batch(32)))
+
+max_day_of_week = day_of_week.max()
+min_day_of_week = day_of_week.min()
+
+day_of_week_buckets = np.linspace(
+    min_day_of_week, max_day_of_week, num=7,
+)
+
+hour = np.concatenate(list(emotion_activities.map(lambda x: x["hour"]).batch(32)))
+
+max_hour = hour.max()
+min_hour = hour.min()
+
+hour_buckets = np.linspace(
+    min_hour, max_hour, num=24,
+)
 
 class UserModel(tf.keras.Model):
 
   def __init__(self):
     super().__init__()
+
+    self.day_of_week_embedding = tf.keras.Sequential([
+        tf.keras.layers.Discretization(day_of_week_buckets.tolist()),
+        tf.keras.layers.Embedding(len(day_of_week_buckets) + 1, 32),
+    ])
+
+    self.normalized_day_of_week = tf.keras.layers.Normalization(
+        axis=None
+    )
+
+    self.normalized_day_of_week.adapt(day_of_week)
+
+    self.hour_embedding = tf.keras.Sequential([
+        tf.keras.layers.Discretization(hour_buckets.tolist()),
+        tf.keras.layers.Embedding(len(hour_buckets) + 1, 32),
+    ])
+
+    self.normalized_hour = tf.keras.layers.Normalization(
+        axis=None
+    )
+
+    self.normalized_hour.adapt(hour)
 
     self.user_embedding = tf.keras.Sequential([
         tf.keras.layers.StringLookup(
@@ -73,6 +118,10 @@ class UserModel(tf.keras.Model):
     return tf.concat([
         self.user_embedding(inputs["userId"]),
         self.feelings_embedding(inputs["emotion"]),
+        self.day_of_week_embedding(inputs["dow"]),
+        tf.reshape(self.normalized_day_of_week(inputs["dow"]), (-1, 1)),
+        self.hour_embedding(inputs["hour"]),
+        tf.reshape(self.normalized_hour(inputs["hour"]), (-1, 1)),
     ], axis=1)
 
 class QueryModel(tf.keras.Model):
@@ -177,6 +226,8 @@ class FeelinglensModel(tfrs.models.Model):
     query_embeddings = self.query_model({
         "userId": features["userId"],
         "emotion": features["emotion"],
+        "dow": features["dow"],
+        "hour": features["hour"]
     })
     activity_embeddings = self.candidate_model(features["activity"])
 
@@ -203,7 +254,10 @@ index.index_from_dataset(
 )
 
 # _, titles = index(np.array(["1","2"])
-_, titles = index({"userId": tf.constant(["2"]), "emotion": tf.constant(["Tired"])})
+_, titles = index({"userId": tf.constant(["2"]),
+                   "emotion": tf.constant(["Sad"]),
+                   "dow":tf.constant([4]),
+                   "hour": tf.constant([7])})
 
 print(f"Top recommendations for user 1 and emotion id: Sad: {titles[0, :1]}")
 

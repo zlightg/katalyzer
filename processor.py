@@ -52,8 +52,9 @@ class Processor:
                 "AND state_id not in (SELECT id from message_state where is_followup) ORDER BY sent_at desc limit 1".format(
             conversation_id)
         result = self.q.execute(query)
-        ## TODO MOVE TO IT's OWN CALL
-        state['persisted'] = json.loads(result[0]["persisted_state"])
+        ## TODO MOVE TO IT's OWN CALL and consider removing
+        if 'persisted' not in state:
+          state['persisted'] = json.loads(result[0]["persisted_state"])
         return result[0].state_id
 
     def getLastMessageState(self, last_message_state_id):
@@ -93,7 +94,7 @@ class Processor:
         return result[0]["category"]
 
     def getRankedActivities(self, user_id, message, context):
-        _, activities = loaded({"userId": tf.constant([user_id]),
+        _, activities = loaded({"userId": tf.constant([str(user_id)]),
                                 "emotion": tf.constant([message]),
                                 "dow": tf.constant([context["dow"]]),
                                 "hour": tf.constant([context["hour"]])

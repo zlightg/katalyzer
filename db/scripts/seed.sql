@@ -105,7 +105,7 @@ CREATE INDEX idx_cool_down_message_state on cool_down(message_state);
 CREATE INDEX idx_conversation_human_id on conversation(human_user_id);
 CREATE INDEX idx_message_timestamp on message(sent_at);
 CREATE INDEX idx_message_conversation_id on message(conversation_id);
-
+CREATE INDEX idx_message_sender_id on message(sender_id);
 
 
 
