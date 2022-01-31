@@ -101,13 +101,16 @@ function makeAjaxCall(state) {
 
 function getContext() {
   date = new Date();
+  const now = new Date();
+  const secondsSinceEpoch = Math.round(now.getTime() / 1000);
   context = {
     'hour': date.getHours(),
     'minute': date.getMinutes(),
     'dow': date.getDay(),
     'month': date.getMonth(),
     'date': date.getDate(),
-    'year': date.getYear()
+    'year': date.getYear(),
+    'unix_time': secondsSinceEpoch
   };
   return context;
 } // Utils

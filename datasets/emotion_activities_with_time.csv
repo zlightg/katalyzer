@@ -19,3 +19,15 @@ User ID,Feeling,Feeling ID,Activity,Activity ID,Hour of day,DOW
 1,Sad,23,Walk,12,7,4
 1,Sad,23,Play,13,7,5
 50,Admiration,1,Dance,4,1,3
+50,Admiration,1,Socialize,8,19,3
+50,Admiration,1,Study,7,20,3
+50,Admiration,1,Socialize,8,20,3
+50,Admiration,1,Write,6,20,3
+50,Admiration,1,Write,6,20,3
+50,Admiration,1,Study,7,20,3
+50,Admiration,1,Write,6,20,3
+50,Admiration,1,Study,7,20,3
+50,Sad,23,Write,6,20,3
+50,Bored,8,Plank,11,20,3
+56,Bored,8,Study,7,21,3
+50,Calm,9,Study,7,21,3
