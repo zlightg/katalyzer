@@ -35,10 +35,10 @@ msgerForm.addEventListener("submit", event => {
   submitMessage(global_state);
 });
 
-function appendMessage(name, img, side, text) {
+function appendMessage(name, img, side, text, id) {
   //   Simple solution for small apps
   const msgHTML = `
-    <div class="msg ${side}-msg">
+    <div class="msg ${side}-msg" id="${id}">
       <div class="msg-img" style="background-image: url(${img})"></div>
 
       <div class="msg-bubble">
@@ -86,6 +86,8 @@ function client_processor(callback) {
 
 function makeAjaxCall(state) {
   //fetch('http://127.0.0.1:5000/messages/' + JSON.stringify(state))
+  wave = '<div id="typing-loader"></div>'
+  appendMessage(BOT_NAME, BOT_IMG, "left", wave, 'typing')
   fetch('http://127.0.0.1:5000/messages', {
     method:'post',
     body: JSON.stringify(state)
@@ -100,7 +102,8 @@ function makeAjaxCall(state) {
         window.localStorage.setItem('user_id',data['state']['user_id'])
       }
       }
-    appendMessage(BOT_NAME, BOT_IMG, "left", data.message)
+    document.getElementById("typing").remove()
+    appendMessage(BOT_NAME, BOT_IMG, "left", data.message, "id-" + Math.random())
     // TOOD Move to seperate function
     if (data['state']['client_processor'] != undefined) {
         client_processor(data['state']['client_processor'])
