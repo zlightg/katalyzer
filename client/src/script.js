@@ -1,6 +1,7 @@
 const msgerForm = get(".msger-inputarea");
 const msgerInput = get(".msger-input");
 const msgerChat = get(".msger-chat");
+const messagesEndPoint = "http://127.0.0.1:5000/messages"
 
 const BOT_MSGS = [
   "Hi, how are you today?",
@@ -85,10 +86,9 @@ function client_processor(callback) {
 }
 
 function makeAjaxCall(state) {
-  //fetch('http://127.0.0.1:5000/messages/' + JSON.stringify(state))
   wave = '<div id="typing-loader"></div>'
   appendMessage(BOT_NAME, BOT_IMG, "left", wave, 'typing')
-  fetch('http://127.0.0.1:5000/messages', {
+  fetch(messagesEndPoint, {
     method:'post',
     body: JSON.stringify(state)
   })
@@ -127,6 +127,13 @@ function getContext() {
 
   }
   return context
+}
+
+function handleClick(cb) {
+  appendMessage(PERSON_NAME, PERSON_IMG, "right", cb.value);
+  msgerInput.value = "";
+  global_state["message"] = cb.value
+  submitMessage(global_state);
 }
 
 // Utils

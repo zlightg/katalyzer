@@ -9,6 +9,7 @@ path = "models"
 # Load it back; can also be done in TensorFlow Serving.
 loaded = tf.saved_model.load(path)
 import csv
+from utils.templateRenderer import renderOptions
 
 
 ## TODO MOVE TO DB CALL BELOW
@@ -82,11 +83,11 @@ class Processor:
 
     def getFeelings(self, state):
         result = self.q.execute("SELECT name from feeling")
-        return ", ".join([row["name"] for row in result])
+        return renderOptions(result)
 
     def getActivities(self, state):
         result = self.q.execute("SELECT name from activity")
-        return ", ".join([row["name"] for row in result])
+        return renderOptions(result)
 
     def getCategory(self, conversation_id):
         query = "SELECT category FROM message_state where id in (SELECT state_id from message where conversation_id = {} AND sender_id = 0 ORDER BY sent_at desc limit 1)".format(conversation_id)
@@ -100,7 +101,7 @@ class Processor:
                                 "hour": tf.constant([context["hour"]])
                                 })
         activity_list = [x.decode('utf-8') for x in activities[0].numpy().tolist()]
-        return ", ".join(activity_list[:3])
+        return renderOptions(activity_list[:3])
 
     def persistState(self, state, key, val):
         if 'persisted' in state:

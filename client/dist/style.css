@@ -177,3 +177,21 @@ body {
         2.2rem 0 0 0 rgba(0,0,0,1);
     }
 }
+
+.chat_options input[type="checkbox"] {
+  display: none;
+}
+
+.chat_options span {
+  display: inline-block;
+  padding: 5px;
+  margin: 2px;
+  border-radius: 200px;
+  background-color: #579ffb;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.chat_options input[type="checkbox"]:hover + span {
+  background-color: gold;
+}
